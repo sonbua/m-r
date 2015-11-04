@@ -61,16 +61,39 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandHandlers.cs" />
-    <Compile Include="Domain.cs" />
-    <Compile Include="EventStore.cs" />
-    <Compile Include="FakeBus.cs" />
+    <Compile Include="Aggregate\AggregateRoot.cs" />
+    <Compile Include="Aggregate\InventoryItem.cs" />
+    <Compile Include="Bus\FakeBus.cs" />
+    <Compile Include="Bus\ICommandSender.cs" />
+    <Compile Include="Bus\IEventPublisher.cs" />
+    <Compile Include="CommandHandlers\CommandHandlers.cs" />
+    <Compile Include="Commands\CheckInItemsToInventoryCommand.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CreateInventoryItemCommand.cs" />
+    <Compile Include="Commands\DeactivateInventoryItemCommand.cs" />
+    <Compile Include="Commands\RemoveItemsFromInventoryCommand.cs" />
+    <Compile Include="Commands\RenameInventoryItemCommand.cs" />
+    <Compile Include="Database\BullShitDatabase.cs" />
+    <Compile Include="Dto\InventoryItemDetailsDto.cs" />
+    <Compile Include="Dto\InventoryItemListDto.cs" />
+    <Compile Include="EventStore\EventStore.cs" />
+    <Compile Include="EventStore\IEventStore.cs" />
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\InventoryItemCreated.cs" />
+    <Compile Include="Events\InventoryItemDeactivated.cs" />
+    <Compile Include="Events\InventoryItemRenamed.cs" />
+    <Compile Include="Events\ItemsCheckedInToInventory.cs" />
+    <Compile Include="Events\ItemsRemovedFromInventory.cs" />
+    <Compile Include="Facade\IReadModelFacade.cs" />
+    <Compile Include="Facade\ReadModelFacade.cs" />
+    <Compile Include="Handles\Handles.cs" />
+    <Compile Include="Handles\InventoryItemDetailView.cs" />
+    <Compile Include="Handles\InventoryListView.cs" />
     <Compile Include="InfrastructureCrap.DontBotherReadingItsNotImportant.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Commands.cs" />
-    <Compile Include="Events.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="ReadModel.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\Repository.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -92,5 +115,6 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

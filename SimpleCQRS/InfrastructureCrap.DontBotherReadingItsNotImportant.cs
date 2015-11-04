@@ -3,88 +3,29 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 
 namespace SimpleCQRS
 {
-
     //FROM http://blogs.msdn.com/b/davidebb/archive/2010/01/18/use-c-4-0-dynamic-to-drastically-simplify-your-private-reflection-code.aspx
     //doesnt count to line counts :)
-    class PrivateReflectionDynamicObject : DynamicObject
+    internal class PrivateReflectionDynamicObject : DynamicObject
     {
+        private const BindingFlags BindingFlags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
 
-        private static IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
-
-        // Simple abstraction to make field and property access consistent
-        interface IProperty
-        {
-            string Name { get; }
-            object GetValue(object obj, object[] index);
-            void SetValue(object obj, object val, object[] index);
-        }
-
-        // IProperty implementation over a PropertyInfo
-        class Property : IProperty
-        {
-            internal PropertyInfo PropertyInfo { get; set; }
-
-            string IProperty.Name
-            {
-                get
-                {
-                    return PropertyInfo.Name;
-                }
-            }
-
-            object IProperty.GetValue(object obj, object[] index)
-            {
-                return PropertyInfo.GetValue(obj, index);
-            }
-
-            void IProperty.SetValue(object obj, object val, object[] index)
-            {
-                PropertyInfo.SetValue(obj, val, index);
-            }
-        }
-
-        // IProperty implementation over a FieldInfo
-        class Field : IProperty
-        {
-            internal FieldInfo FieldInfo { get; set; }
-
-            string IProperty.Name
-            {
-                get
-                {
-                    return FieldInfo.Name;
-                }
-            }
-
-
-            object IProperty.GetValue(object obj, object[] index)
-            {
-                return FieldInfo.GetValue(obj);
-            }
-
-            void IProperty.SetValue(object obj, object val, object[] index)
-            {
-                FieldInfo.SetValue(obj, val);
-            }
-        }
-
+        private static readonly IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
 
         private object RealObject { get; set; }
-        private const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         internal static object WrapObjectIfNeeded(object o)
         {
             // Don't wrap primitive types, which don't have many interesting internal APIs
             if (o == null || o.GetType().IsPrimitive || o is string)
+            {
                 return o;
+            }
 
-            return new PrivateReflectionDynamicObject() { RealObject = o };
+            return new PrivateReflectionDynamicObject {RealObject = o};
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
@@ -175,10 +116,7 @@ namespace SimpleCQRS
             // Get a list of supported properties and fields and show them as part of the exception message
             // For fields, skip the auto property backing fields (which name start with <)
             var propNames = typeProperties.Keys.Where(name => name[0] != '<').OrderBy(name => name);
-            throw new ArgumentException(
-                String.Format(
-                "The property {0} doesn't exist on type {1}. Supported properties are: {2}",
-                propertyName, RealObject.GetType(), String.Join(", ", propNames)));
+            throw new ArgumentException(string.Format("The property {0} doesn't exist on type {1}. Supported properties are: {2}", propertyName, RealObject.GetType(), string.Join(", ", propNames)));
         }
 
         private static IDictionary<string, IProperty> GetTypeProperties(Type type)
@@ -195,15 +133,15 @@ namespace SimpleCQRS
             typeProperties = new ConcurrentDictionary<string, IProperty>();
 
             // First, add all the properties
-            foreach (PropertyInfo prop in type.GetProperties(bindingFlags).Where(p => p.DeclaringType == type))
+            foreach (PropertyInfo prop in type.GetProperties(BindingFlags).Where(p => p.DeclaringType == type))
             {
-                typeProperties[prop.Name] = new Property() { PropertyInfo = prop };
+                typeProperties[prop.Name] = new Property() {PropertyInfo = prop};
             }
 
             // Now, add all the fields
-            foreach (FieldInfo field in type.GetFields(bindingFlags).Where(p => p.DeclaringType == type))
+            foreach (FieldInfo field in type.GetFields(BindingFlags).Where(p => p.DeclaringType == type))
             {
-                typeProperties[field.Name] = new Field() { FieldInfo = field };
+                typeProperties[field.Name] = new Field() {FieldInfo = field};
             }
 
             // Finally, recurse on the base class to add its fields
@@ -226,12 +164,7 @@ namespace SimpleCQRS
             try
             {
                 // Try to incoke the method
-                return type.InvokeMember(
-                    name,
-                    BindingFlags.InvokeMethod | bindingFlags,
-                    null,
-                    target,
-                    args);
+                return type.InvokeMember(name, BindingFlags.InvokeMethod | BindingFlags, null, target, args);
             }
             catch (MissingMethodException)
             {
@@ -240,12 +173,58 @@ namespace SimpleCQRS
                 {
                     return InvokeMemberOnType(type.BaseType, target, name, args);
                 }
+
                 //quick greg hack to allow methods to not exist!
                 return null;
             }
         }
-    }
 
+        // Simple abstraction to make field and property access consistent
+        private interface IProperty
+        {
+            string Name { get; }
+
+            object GetValue(object obj, object[] index);
+
+            void SetValue(object obj, object val, object[] index);
+        }
+
+        // IProperty implementation over a PropertyInfo
+        private class Property : IProperty
+        {
+            internal PropertyInfo PropertyInfo { get; set; }
+
+            string IProperty.Name => PropertyInfo.Name;
+
+            object IProperty.GetValue(object obj, object[] index)
+            {
+                return PropertyInfo.GetValue(obj, index);
+            }
+
+            void IProperty.SetValue(object obj, object val, object[] index)
+            {
+                PropertyInfo.SetValue(obj, val, index);
+            }
+        }
+
+        // IProperty implementation over a FieldInfo
+        private class Field : IProperty
+        {
+            internal FieldInfo FieldInfo { get; set; }
+
+            string IProperty.Name => FieldInfo.Name;
+
+            object IProperty.GetValue(object obj, object[] index)
+            {
+                return FieldInfo.GetValue(obj);
+            }
+
+            void IProperty.SetValue(object obj, object val, object[] index)
+            {
+                FieldInfo.SetValue(obj, val);
+            }
+        }
+    }
 
     public static class PrivateReflectionDynamicObjectExtensions
     {
