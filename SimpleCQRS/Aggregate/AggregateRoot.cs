@@ -26,24 +26,21 @@ namespace SimpleCQRS.Aggregate
         {
             foreach (var @event in history)
             {
-                ApplyChange(@event, false);
+                Apply(@event);
             }
         }
 
         protected void ApplyChange(Event @event)
         {
-            ApplyChange(@event, true);
+            Apply(@event);
+
+            _changes.Add(@event);
         }
 
         // push atomic aggregate changes to local history for further processing (EventStore.SaveEvents)
-        private void ApplyChange(Event @event, bool isNew)
+        private void Apply(Event @event)
         {
             this.AsDynamic().Apply(@event);
-
-            if (isNew)
-            {
-                _changes.Add(@event);
-            }
         }
     }
 }

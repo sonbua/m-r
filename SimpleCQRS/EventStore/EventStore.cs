@@ -34,16 +34,16 @@ namespace SimpleCQRS.EventStore
             {
                 throw new ConcurrencyException();
             }
-            var i = expectedVersion;
+            var version = expectedVersion;
 
             // iterate through current aggregate events increasing version with each processed event
             foreach (var @event in events)
             {
-                i++;
-                @event.Version = i;
+                version++;
+                @event.Version = version;
 
                 // push event to the event descriptors list for current aggregate
-                eventDescriptors.Add(new EventDescriptor(aggregateId, @event, i));
+                eventDescriptors.Add(new EventDescriptor(aggregateId, @event, version));
 
                 // publish current event to the bus for further processing by subscribers
                 _publisher.Publish(@event);
