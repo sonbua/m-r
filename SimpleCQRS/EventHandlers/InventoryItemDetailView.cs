@@ -1,15 +1,15 @@
 using System;
-using SimpleCQRS.Database;
-using SimpleCQRS.Dto;
+using SimpleCQRS.Databases.Read;
 using SimpleCQRS.Events;
+using SimpleCQRS.ViewModels;
 
-namespace SimpleCQRS.Handles
+namespace SimpleCQRS.EventHandlers
 {
     public class InventoryItemDetailView : Handles<InventoryItemCreated>, Handles<InventoryItemDeactivated>, Handles<InventoryItemRenamed>, Handles<ItemsRemovedFromInventory>, Handles<ItemsCheckedInToInventory>
     {
         public void Handle(InventoryItemCreated @event)
         {
-            BullshitDatabase.Details.Add(@event.Id, new InventoryItemDetailsDto(@event.Id, @event.Name, 0, 0));
+            BullshitDatabase.Details.Add(@event.Id, new InventoryItemDetailsViewModel(@event.Id, @event.Name, 0, 0));
         }
 
         public void Handle(InventoryItemDeactivated @event)
@@ -41,9 +41,9 @@ namespace SimpleCQRS.Handles
             details.Version = @event.Version;
         }
 
-        private InventoryItemDetailsDto GetDetailsItem(Guid id)
+        private InventoryItemDetailsViewModel GetDetailsItem(Guid id)
         {
-            InventoryItemDetailsDto details;
+            InventoryItemDetailsViewModel details;
 
             if (BullshitDatabase.Details.TryGetValue(id, out details))
             {

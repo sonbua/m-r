@@ -73,27 +73,27 @@
     <Compile Include="Commands\DeactivateInventoryItemCommand.cs" />
     <Compile Include="Commands\RemoveItemsFromInventoryCommand.cs" />
     <Compile Include="Commands\RenameInventoryItemCommand.cs" />
-    <Compile Include="Database\BullShitDatabase.cs" />
-    <Compile Include="Dto\InventoryItemDetailsDto.cs" />
-    <Compile Include="Dto\InventoryItemListDto.cs" />
-    <Compile Include="EventStore\EventStore.cs" />
-    <Compile Include="EventStore\IEventStore.cs" />
+    <Compile Include="Databases\Read\BullShitDatabase.cs" />
+    <Compile Include="Databases\Write\EventStore.cs" />
+    <Compile Include="Databases\Write\IEventStore.cs" />
+    <Compile Include="EventHandlers\Handles.cs" />
+    <Compile Include="EventHandlers\InventoryItemDetailView.cs" />
+    <Compile Include="EventHandlers\InventoryListView.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\InventoryItemCreated.cs" />
     <Compile Include="Events\InventoryItemDeactivated.cs" />
     <Compile Include="Events\InventoryItemRenamed.cs" />
     <Compile Include="Events\ItemsCheckedInToInventory.cs" />
     <Compile Include="Events\ItemsRemovedFromInventory.cs" />
-    <Compile Include="Facade\IReadModelFacade.cs" />
-    <Compile Include="Facade\ReadModelFacade.cs" />
-    <Compile Include="Handles\Handles.cs" />
-    <Compile Include="Handles\InventoryItemDetailView.cs" />
-    <Compile Include="Handles\InventoryListView.cs" />
     <Compile Include="InfrastructureCrap.DontBotherReadingItsNotImportant.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\Repository.cs" />
+    <Compile Include="ViewModelFacade\IViewModelFacade.cs" />
+    <Compile Include="ViewModelFacade\ViewModelFacade.cs" />
+    <Compile Include="ViewModels\InventoryItemDetailsViewModel.cs" />
+    <Compile Include="ViewModels\InventoryItemListViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

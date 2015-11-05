@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SimpleCQRS.Events;
 
-namespace SimpleCQRS.EventStore
+namespace SimpleCQRS.Databases.Write
 {
     public interface IEventStore
     {

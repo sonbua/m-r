@@ -1,13 +1,13 @@
 using System;
 
-namespace SimpleCQRS.Dto
+namespace SimpleCQRS.ViewModels
 {
-    public class InventoryItemListDto
+    public class InventoryItemListViewModel
     {
         public Guid Id;
         public string Name;
 
-        public InventoryItemListDto(Guid id, string name)
+        public InventoryItemListViewModel(Guid id, string name)
         {
             Id = id;
             Name = name;

@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using SimpleCQRS.Bus;
 using SimpleCQRS.Commands;
-using SimpleCQRS.Facade;
+using SimpleCQRS.ViewModelFacade;
 
 namespace CQRSGui.Controllers
 {
@@ -10,24 +10,24 @@ namespace CQRSGui.Controllers
     public class HomeController : Controller
     {
         private readonly FakeBus _bus;
-        private readonly ReadModelFacade _readModel;
+        private readonly ViewModelFacade _viewModelFacade;
 
         public HomeController()
         {
             _bus = ServiceLocator.Bus;
-            _readModel = new ReadModelFacade();
+            _viewModelFacade = new ViewModelFacade();
         }
 
         public ActionResult Index()
         {
-            ViewData.Model = _readModel.GetInventoryItems();
+            ViewData.Model = _viewModelFacade.GetInventoryItems();
 
             return View();
         }
 
         public ActionResult Details(Guid id)
         {
-            ViewData.Model = _readModel.GetInventoryItemDetails(id);
+            ViewData.Model = _viewModelFacade.GetInventoryItemDetails(id);
 
             return View();
         }
@@ -47,7 +47,7 @@ namespace CQRSGui.Controllers
 
         public ActionResult ChangeName(Guid id)
         {
-            ViewData.Model = _readModel.GetInventoryItemDetails(id);
+            ViewData.Model = _viewModelFacade.GetInventoryItemDetails(id);
 
             return View();
         }
@@ -69,7 +69,7 @@ namespace CQRSGui.Controllers
 
         public ActionResult CheckIn(Guid id)
         {
-            ViewData.Model = _readModel.GetInventoryItemDetails(id);
+            ViewData.Model = _viewModelFacade.GetInventoryItemDetails(id);
 
             return View();
         }
@@ -84,7 +84,7 @@ namespace CQRSGui.Controllers
 
         public ActionResult Remove(Guid id)
         {
-            ViewData.Model = _readModel.GetInventoryItemDetails(id);
+            ViewData.Model = _viewModelFacade.GetInventoryItemDetails(id);
 
             return View();
         }

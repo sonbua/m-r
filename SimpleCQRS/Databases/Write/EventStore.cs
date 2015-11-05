@@ -4,7 +4,7 @@ using System.Linq;
 using SimpleCQRS.Bus;
 using SimpleCQRS.Events;
 
-namespace SimpleCQRS.EventStore
+namespace SimpleCQRS.Databases.Write
 {
     public class EventStore : IEventStore
     {

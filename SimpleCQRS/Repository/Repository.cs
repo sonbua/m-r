@@ -1,6 +1,6 @@
 using System;
 using SimpleCQRS.Aggregate;
-using SimpleCQRS.EventStore;
+using SimpleCQRS.Databases.Write;
 
 namespace SimpleCQRS.Repository
 {
